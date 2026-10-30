@@ -98,6 +98,11 @@ label{font-size:14px;font-weight:600;display:block;margin-top:14px}
       <h1>Where do you live?</h1>
       <p class="muted">You will see listings from your building first. Your unit number is never shown to anyone.</p>
       <div id="bldList"></div>
+      <div id="otherBox" style="display:none">
+        <label for="otherBld">Which building? (optional)</label>
+        <input id="otherBld" placeholder="You can leave this blank" autocomplete="off">
+        <p class="muted" style="font-size:12px">Your building is not open yet, so you will see the Red Road Commons demo for now.</p>
+      </div>
       <button class="btn" id="bldNext" disabled>Show my building</button>
     </section>
 
@@ -274,8 +279,8 @@ $("checkCode").onclick=()=>{if($("code").value.trim()!=="246810"){$("codeErr").t
   S.verified=true;log("verified");const n=S.after;S.after=null;n?n():show(S.bld?"feed":"building")};
 // building
 $("bldList").innerHTML=BUILDINGS.map(b=>`<div class="bldopt" data-b="${b.id}"><b>${b.name}</b><div class="muted">${b.cluster} cluster</div></div>`).join("")+`<div class="bldopt" data-b="other"><b>Somewhere else</b><div class="muted">We'll tell you when your building opens</div></div>`;
-$("bldList").onclick=e=>{const o=e.target.closest(".bldopt");if(!o)return;document.querySelectorAll(".bldopt").forEach(x=>x.classList.remove("sel"));o.classList.add("sel");S.bld=o.dataset.b;$("bldNext").disabled=false;log("building: "+S.bld)};
-$("bldNext").onclick=()=>{if(S.bld==="other"){alert("Thanks. Your building is not open yet, so you'll see the Red Road Commons demo.");S.bld="rrc"}
+$("bldList").onclick=e=>{const o=e.target.closest(".bldopt");if(!o)return;document.querySelectorAll(".bldopt").forEach(x=>x.classList.remove("sel"));o.classList.add("sel");S.bld=o.dataset.b;$("otherBox").style.display=S.bld==="other"?"block":"none";$("bldNext").disabled=false;log("building: "+S.bld)};
+$("bldNext").onclick=()=>{if(S.bld==="other"){log("other building: "+($("otherBld").value.trim()||"(left blank)"));S.bld="rrc"}
   $("hdrBld").textContent=BUILDINGS.find(b=>b.id===S.bld).name;S.stack=["building"];show("feed")};
 $("hdrBld").style.cursor="pointer";
 $("hdrBld").onclick=()=>{if(S.bld)show("building")};
