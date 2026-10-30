@@ -72,7 +72,7 @@ label{font-size:14px;font-weight:600;display:block;margin-top:14px}
       <h1>Furnish from the students in your own building.</h1>
       <p class="muted">Buy and sell household items with verified UM students who live where you live. Walkable pickups, no strangers from across the city.</p>
       <div class="box"><span class="pill">Verified</span><span class="pill">Same building</span><span class="pill">Lobby pickup</span></div>
-      <button class="btn" data-go="building">See items near me</button>
+      <button class="btn" data-go="verify">Get started</button>
       <p class="muted" style="margin-top:14px;font-size:12px">Prototype built by a UM student. Listings are samples and no real payment is taken. Not officially run or endorsed by the University of Miami.</p>
     </section>
 
@@ -84,6 +84,7 @@ label{font-size:14px;font-weight:600;display:block;margin-top:14px}
       <input id="email" type="email" value="student@miami.edu" placeholder="name@miami.edu" autocomplete="off">
       <div class="err" id="emailErr"></div>
       <button class="btn" id="sendCode">Send code</button>
+      <button id="skipVerify" style="display:block;margin:14px auto 0;background:none;border:0;color:var(--muted);font-size:13px;text-decoration:underline;cursor:pointer">Skip for now</button>
       <div id="codeBox" style="display:none">
         <label for="code">6 digit code</label>
         <input id="code" inputmode="numeric" maxlength="6" value="246810" placeholder="Demo code: 246810">
@@ -199,7 +200,7 @@ label{font-size:14px;font-weight:600;display:block;margin-top:14px}
   <h2>How to test this prototype</h2>
   <p><b>Task A.</b> "You just moved in and need a desk. Find one and buy it."</p>
   <p><b>Task B.</b> "You need several items before classes. Ask the service to find them for you."</p>
-  <p>Browsing needs no sign in. Verification appears at Buy now, Message seller and Wanted List, with a demo email and code already filled in.</p>
+  <p>The first screen asks for a school email and has a small Skip link. Buying, offers, messages and Wanted Lists still need verification. A demo email and code are already filled in.</p>
   <p>The <b>Log</b> tab records each step with a timestamp so completion time and backtracking can be written up after the session.</p>
   <p>What is simulated: verification email, listings, payment hold and matching. A person does the matching by hand during the pilot.</p>
 </aside>
@@ -241,7 +242,7 @@ const ITEMS=[
  {id:23,n:"Study desk with storage drawers",p:70,e:"<img src='img/desk.jpg' alt=''>",b:"toscana",c:"Good",d:"Desk with shelf and drawer unit. Personal items blurred in the photo."},
  {id:24,n:"Cosori air fryer",p:60,e:"<img src='img/airfryer.jpg' alt=''>",b:"toscana",c:"Like new",d:"Works perfectly."}];
 const S={stack:["welcome"],bld:null,item:null,scope:"bld",log:[],verified:false,after:null};
-function needVerify(next){if(S.verified){next();return}S.after=next;log("verification requested");show("verify")}
+function needVerify(next){if(!S.verified)$("skipVerify").style.display="none";if(S.verified){next();return}S.after=next;log("verification requested");show("verify")}
 const $=id=>document.getElementById(id);
 const fmt=v=>"$"+v.toFixed(2).replace(/\.00$/,"");
 function log(ev){const t=new Date();S.log.push(t.toLocaleTimeString()+"  "+ev);try{localStorage.setItem("cx_log",JSON.stringify(S.log))}catch(e){}}
@@ -268,7 +269,7 @@ $("sendCode").onclick=()=>{const v=$("email").value.trim().toLowerCase();
   if(!/^[^@\s]+@[^@\s]+\.edu$/.test(v)){$("emailErr").textContent="Use your school email (ending in .edu).";log("email rejected");return}
   $("emailErr").textContent="";$("codeBox").style.display="block";log("code sent")};
 $("checkCode").onclick=()=>{if($("code").value.trim()!=="246810"){$("codeErr").textContent="That code doesn't match. Try 246810 in this demo.";log("wrong code");return}
-  S.verified=true;log("verified");const n=S.after;S.after=null;n?n():show("feed")};
+  S.verified=true;log("verified");const n=S.after;S.after=null;n?n():show(S.bld?"feed":"building")};
 // building
 $("bldList").innerHTML=BUILDINGS.map(b=>`<div class="bldopt" data-b="${b.id}"><b>${b.name}</b><div class="muted">${b.cluster} cluster</div></div>`).join("")+`<div class="bldopt" data-b="other"><b>Somewhere else</b><div class="muted">We'll tell you when your building opens</div></div>`;
 $("bldList").onclick=e=>{const o=e.target.closest(".bldopt");if(!o)return;document.querySelectorAll(".bldopt").forEach(x=>x.classList.remove("sel"));o.classList.add("sel");S.bld=o.dataset.b;$("bldNext").disabled=false;log("building: "+S.bld)};
@@ -293,6 +294,7 @@ $("ofSend").onclick=()=>{const i=S.item,v=parseFloat($("ofAmt").value);
   if(v>=i.p){log("OFFER at or above list: "+v);S.offerPrice=null;show("checkout");return}
   if(v<i.floor){$("ofErr").textContent="The seller cannot accept this offer. You can try a higher amount or buy at the listed price.";log("OFFER declined: "+v+" of "+i.p);return}
   S.offerPrice=v;log("OFFER accepted: "+v+" of "+i.p);show("checkout")};
+$("skipVerify").onclick=()=>{log("verification skipped");show(S.bld?"feed":"building")};
 $("buyBtn").onclick=()=>needVerify(()=>show("checkout"));
 $("msgBtn").onclick=()=>needVerify(()=>{log("message seller tapped");alert("Messaging is simulated in this prototype. The founder relays messages by hand during the pilot.")});
 // checkout
