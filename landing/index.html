@@ -104,8 +104,9 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:13px}
 <script>
 // Paste the public Notion form link here (Notion form view > Share > Copy link).
 const FORM_URL = "https://hail-mosquito-a82.notion.site/5017b8939a8d459087defb4112675d6a";
+const SELLER_FORM_URL = "https://hail-mosquito-a82.notion.site/a3895a6721e74fc7b4efc82f1d64d057";
 document.querySelectorAll("[data-tier]").forEach(a => {
-  a.href = FORM_URL;
+  a.href = a.dataset.tier === "seller" ? SELLER_FORM_URL : FORM_URL;
   a.target = "_blank";
   a.rel = "noopener";
 });
