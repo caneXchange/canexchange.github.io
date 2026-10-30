@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CanesXchange Prototype</title>
+<style>
+:root{--ink:#14211c;--muted:#5b6b64;--line:#dfe6e2;--bg:#eef2f0;--card:#fff;--brand:#0f5c45;--brand2:#e8742a;--soft:#e7f2ed;--warn:#fff4e5}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+.wrap{display:flex;gap:28px;justify-content:center;align-items:flex-start;padding:24px 16px}
+.phone{width:390px;max-width:100%;min-height:760px;background:var(--card);border-radius:28px;box-shadow:0 10px 40px rgba(0,0,0,.12);overflow:hidden;display:flex;flex-direction:column;position:relative}
+.side{width:300px;font-size:14px;color:var(--muted);line-height:1.5}
+.side h2{color:var(--ink);font-size:16px;margin:0 0 8px}
+.side code{background:#fff;padding:1px 5px;border-radius:4px}
+@media(max-width:760px){.side{display:none}.wrap{padding:0}.phone{border-radius:0;min-height:100vh}}
+header{background:var(--brand);color:#fff;padding:14px 18px;display:flex;align-items:center;gap:10px}
+header b{font-size:17px}
+header .back{background:none;border:0;color:#fff;font-size:22px;cursor:pointer;padding:0 4px;visibility:hidden}
+header .bld{margin-left:auto;font-size:12px;background:rgba(255,255,255,.18);padding:4px 8px;border-radius:999px}
+main{flex:1;padding:18px;overflow-y:auto}
+.screen{display:none}.screen.on{display:block}
+h1{font-size:24px;margin:8px 0 6px}
+p{line-height:1.5;margin:6px 0}
+.muted{color:var(--muted);font-size:14px}
+.btn{display:block;width:100%;padding:14px;border:0;border-radius:12px;background:var(--brand);color:#fff;font-size:16px;font-weight:600;cursor:pointer;margin-top:12px}
+.btn.alt{background:#fff;color:var(--brand);border:1.5px solid var(--brand)}
+.btn.orange{background:var(--brand2)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+input,textarea,select{width:100%;padding:12px;border:1.5px solid var(--line);border-radius:10px;font-size:15px;font-family:inherit;margin-top:6px}
+label{font-size:14px;font-weight:600;display:block;margin-top:14px}
+.err{color:#b3261e;font-size:13px;margin-top:6px;min-height:16px}
+.pill{display:inline-block;font-size:12px;padding:3px 8px;border-radius:999px;background:var(--soft);color:var(--brand);font-weight:600;margin-right:4px}
+.pill.o{background:var(--warn);color:#9a4d0e}
+.list{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.item{border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;background:#fff}
+.item .ph{height:96px;display:flex;align-items:center;justify-content:center;font-size:40px;background:#f4f7f5}
+.item .t{padding:8px 10px;font-size:14px}
+.item .pr{font-weight:700}
+.bldopt{border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:10px;cursor:pointer}
+.bldopt.sel{border-color:var(--brand);background:var(--soft)}
+.seg{display:flex;background:#f1f4f2;border-radius:10px;padding:3px;margin-top:10px}
+.seg button{flex:1;border:0;background:none;padding:8px;border-radius:8px;font-weight:600;color:var(--muted);cursor:pointer}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.big{height:180px;border-radius:14px;background:#f4f7f5;display:flex;align-items:center;justify-content:center;font-size:72px}
+.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:15px}
+.row.tot{font-weight:700;border-bottom:0}
+.box{background:#f6f8f7;border-radius:12px;padding:12px 14px;margin-top:12px;font-size:14px;line-height:1.5}
+.box.warn{background:var(--warn)}
+.toggle{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--line);border-radius:12px;padding:12px;margin-top:12px;cursor:pointer}
+.toggle input{width:20px;height:20px;margin:2px 0 0}
+.tabs{display:flex;border-top:1px solid var(--line)}
+.tabs button{flex:1;border:0;background:#fff;padding:10px 0 12px;font-size:12px;color:var(--muted);cursor:pointer}
+.tabs button.on{color:var(--brand);font-weight:700}
+.tabs span{display:block;font-size:20px}
+.check{font-size:56px;text-align:center;margin-top:20px}
+.demo{position:absolute;top:58px;right:10px;font-size:10px;background:#000;color:#fff;opacity:.55;padding:2px 6px;border-radius:4px}
+#log{font-family:ui-monospace,monospace;font-size:12px;background:#fff;border-radius:8px;padding:8px;max-height:260px;overflow:auto;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="phone">
+  <header><button class="back" id="back" aria-label="Back">&#8249;</button><b>CanesXchange</b><span class="bld" id="hdrBld"></span></header>
+  <span class="demo">PROTOTYPE v1</span>
+  <main>
+    <!-- 1 Welcome -->
+    <section class="screen on" id="s-welcome">
+      <h1>Furnish from the students in your own building.</h1>
+      <p class="muted">Buy and sell household items with verified UM students who live where you live. Walkable pickups, no strangers from across the city.</p>
+      <div class="box"><span class="pill">Verified</span><span class="pill">Same building</span><span class="pill">Lobby pickup</span></div>
+      <button class="btn" data-go="verify">Get started with UM email</button>
+      <p class="muted" style="margin-top:14px;font-size:12px">Prototype built by a UM student. Listings are samples and no real payment is taken. Not officially run or endorsed by the University of Miami.</p>
+    </section>
+
+    <!-- 2 Verify -->
+    <section class="screen" id="s-verify">
+      <h1>Verify you are a UM student</h1>
+      <p class="muted">Only students with a UM email can buy, sell or message. Verification confirms identity, not item condition.</p>
+      <label for="email">UM email</label>
+      <input id="email" type="email" placeholder="name@miami.edu" autocomplete="off">
+      <div class="err" id="emailErr"></div>
+      <button class="btn" id="sendCode">Send code</button>
+      <div id="codeBox" style="display:none">
+        <label for="code">6 digit code</label>
+        <input id="code" inputmode="numeric" maxlength="6" placeholder="Demo code: 246810">
+        <div class="err" id="codeErr"></div>
+        <button class="btn" id="checkCode">Verify</button>
+      </div>
+    </section>
+
+    <!-- 3 Building -->
+    <section class="screen" id="s-building">
+      <h1>Where do you live?</h1>
+      <p class="muted">You will see listings from your building first. Your unit number is never shown to anyone.</p>
+      <div id="bldList"></div>
+      <button class="btn" id="bldNext" disabled>Show my building</button>
+    </section>
+
+    <!-- 4 Feed -->
+    <section class="screen" id="s-feed">
+      <div class="seg"><button class="on" data-scope="bld">My building</button><button data-scope="cluster">Nearby cluster</button></div>
+      <input id="search" placeholder="Search desk, sofa, rice cooker..." style="margin-top:10px">
+      <p class="muted" id="feedCount" style="margin-top:10px"></p>
+      <div class="list" id="feed"></div>
+      <div class="box" style="margin-top:16px"><b>Can't find it?</b> Post a Wanted List and we match it with students moving out.
+        <button class="btn alt" data-go="wanted" style="margin-top:10px">Create a Wanted List</button></div>
+    </section>
+
+    <!-- 5 Item -->
+    <section class="screen" id="s-item">
+      <div class="big" id="itPh"></div>
+      <h1 id="itName" style="margin-top:14px"></h1>
+      <div style="font-size:22px;font-weight:700" id="itPrice"></div>
+      <div style="margin-top:8px" id="itPills"></div>
+      <p class="muted" id="itDesc"></p>
+      <div class="box warn" id="itDisc" style="display:none"></div>
+      <div class="box"><b>Pickup:</b> <span id="itPickup"></span><br>Meet in the lobby or mailroom. Book the service elevator for large items.</div>
+      <button class="btn" data-go="checkout">Buy now</button>
+      <button class="btn alt" id="msgBtn">Message seller</button>
+    </section>
+
+    <!-- 6 Checkout -->
+    <section class="screen" id="s-checkout">
+      <h1>Review and pay</h1>
+      <div class="row"><span id="coName"></span><span id="coPrice"></span></div>
+      <div class="row"><span>Service fee <span class="muted">(<span id="coRule"></span>)</span></span><span id="coFee"></span></div>
+      <label class="toggle" for="protect"><input type="checkbox" id="protect"><span><b>Protected Payment (+3%)</b><br><span class="muted">Your money is held until you confirm you picked up the item. If the seller never shows, you are refunded.</span></span></label>
+      <div class="row" id="protRow" style="display:none"><span>Protected Payment</span><span id="coProt"></span></div>
+      <div class="row tot"><span>Total</span><span id="coTot"></span></div>
+      <p class="muted" style="font-size:12px">Buying directly is free. Sellers pay nothing.</p>
+      <button class="btn" id="payBtn">Confirm purchase</button>
+      <button class="btn alt" id="cashBtn">I'll pay the seller in person instead</button>
+    </section>
+
+    <!-- 7 Done -->
+    <section class="screen" id="s-done">
+      <div class="check">&#9989;</div>
+      <h1 style="text-align:center" id="doneTitle">Pickup arranged</h1>
+      <p class="muted" style="text-align:center" id="doneText"></p>
+      <div class="box" id="doneSteps"></div>
+      <button class="btn" data-go="feed">Back to my building</button>
+    </section>
+
+    <!-- 8 Wanted list -->
+    <section class="screen" id="s-wanted">
+      <h1>Wanted List</h1>
+      <p class="muted">Tell us what you need. We match it with students moving out of your building and nearby, and coordinate pickups. Most lists are substantially filled within 10 days.</p>
+      <label for="wItems">Items you need (one per line)</label>
+      <textarea id="wItems" rows="5" placeholder="desk&#10;office chair&#10;floor lamp"></textarea>
+      <label for="wBudget">Total budget for items</label>
+      <select id="wBudget"><option value="">Choose</option><option>Under $200</option><option>$200 to $400</option><option>$400 to $700</option><option>Over $700</option></select>
+      <label for="wBy">Needed by</label>
+      <input id="wBy" type="date">
+      <div class="box"><b>10% of the price of each item we find</b>, added only when you approve that item. Nothing to pay if we find nothing.</div>
+      <div class="err" id="wErr"></div>
+      <button class="btn orange" id="wSubmit">Submit Wanted List</button>
+    </section>
+
+    <!-- 9 Sell (out of scope) -->
+    <section class="screen" id="s-sell">
+      <h1>Sell an item</h1>
+      <p class="muted">Listing flow is not part of this prototype. In the test, sellers are recruited by hand through student group chats.</p>
+      <button class="btn alt" data-go="feed">Back</button>
+    </section>
+
+    <!-- Session log for tests -->
+    <section class="screen" id="s-log">
+      <h1>Session log</h1>
+      <p class="muted">Steps and timings from this device, used to record task completion during tests.</p>
+      <div id="log"></div>
+      <button class="btn alt" id="copyLog">Copy log</button>
+      <button class="btn alt" id="resetAll">Reset prototype</button>
+    </section>
+  </main>
+  <nav class="tabs" id="tabs" style="display:none">
+    <button data-go="feed" class="on"><span>&#127968;</span>Building</button>
+    <button data-go="wanted"><span>&#128221;</span>Wanted</button>
+    <button data-go="sell"><span>&#10133;</span>Sell</button>
+    <button data-go="log"><span>&#9201;</span>Log</button>
+  </nav>
+</div>
+<aside class="side">
+  <h2>How to test this prototype</h2>
+  <p><b>Task A.</b> "You just moved in and need a desk. Find one and buy it."</p>
+  <p><b>Task B.</b> "You need several items before classes. Ask the service to find them for you."</p>
+  <p>Any <code>@miami.edu</code> address works. Demo code: <code>246810</code>.</p>
+  <p>The <b>Log</b> tab records each step with a timestamp so completion time and backtracking can be written up after the session.</p>
+  <p>What is simulated: verification email, listings, payment hold and matching. A person does the matching by hand during the pilot.</p>
+</aside>
+</div>
+<script>
+const BUILDINGS=[
+ {id:"rrc",name:"Red Road Commons",cluster:"South Miami",units:404},
+ {id:"link",name:"Link at Douglas",cluster:"Douglas Road",units:733},
+ {id:"motion",name:"Motion at Dadeland",cluster:"Dadeland",units:294},
+ {id:"valencia",name:"Valencia",cluster:"South Miami",units:301},
+ {id:"uinn",name:"University Inn",cluster:"South Miami",units:146}];
+const ITEMS=[
+ {id:1,n:"IKEA desk, white",p:30,e:"&#128421;",b:"rrc",c:"Like new",d:"120 x 60 cm. Moving to a smaller unit."},
+ {id:2,n:"Office chair",p:25,e:"&#129681;",b:"rrc",c:"Good",d:"Adjustable height, mesh back."},
+ {id:3,n:"Rice cooker (6 cup)",p:15,e:"&#127834;",b:"rrc",c:"Good",d:"Works perfectly, inner pot included."},
+ {id:4,n:"3 seat sofa",p:180,e:"&#128715;",b:"valencia",c:"Good",d:"Grey fabric, no pets, no smoking.",disc:"Seller condition disclosure dated Oct 20, 2026: no stains, no tears, no pests seen. Upholstery is sold only with a dated disclosure."},
+ {id:5,n:"Floor lamp",p:12,e:"&#128161;",b:"rrc",c:"Like new",d:"Warm LED bulb included."},
+ {id:6,n:"IKEA cart (RASKOG)",p:20,e:"&#128722;",b:"uinn",c:"Good",d:"Teal, 3 shelves."},
+ {id:7,n:"24 inch monitor",p:60,e:"&#128250;",b:"rrc",c:"Good",d:"HDMI cable included."},
+ {id:8,n:"Dining table + 2 chairs",p:70,e:"&#127869;",b:"valencia",c:"Fair",d:"Small scratches on top."},
+ {id:9,n:"Box fan",p:4,e:"&#127744;",b:"rrc",c:"Fair",d:"Loud on high, fine on low."},
+ {id:10,n:"Dresser, 4 drawer",p:45,e:"&#129695;",b:"link",c:"Good",d:"Easy to carry in two pieces."},
+ {id:11,n:"Kitchen set (pots, utensils)",p:10,e:"&#127859;",b:"motion",c:"Good",d:"Everything for a first week kitchen."},
+ {id:12,n:"Bookshelf",p:18,e:"&#128218;",b:"link",c:"Good",d:"5 shelves."}];
+const S={stack:["welcome"],bld:null,item:null,scope:"bld",log:[]};
+const $=id=>document.getElementById(id);
+const fmt=v=>"$"+v.toFixed(2).replace(/\.00$/,"");
+function log(ev){const t=new Date();S.log.push(t.toLocaleTimeString()+"  "+ev);try{localStorage.setItem("cx_log",JSON.stringify(S.log))}catch(e){}}
+try{S.log=JSON.parse(localStorage.getItem("cx_log")||"[]")}catch(e){}
+function fee(p){return[0,"0% when you buy directly"]}
+function show(name,push=true){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on"));
+  $("s-"+name).classList.add("on");
+  if(push&&S.stack[S.stack.length-1]!==name)S.stack.push(name);
+  $("back").style.visibility=S.stack.length>1&&name!=="done"?"visible":"hidden";
+  const app=["feed","item","checkout","done","wanted","sell","log"].includes(name);
+  $("tabs").style.display=app?"flex":"none";
+  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.go===name));
+  if(name==="feed")renderFeed();
+  if(name==="checkout")renderCheckout();
+  if(name==="log")$("log").textContent=S.log.join("\n")||"No steps yet.";
+  log("screen: "+name);
+  document.querySelector("main").scrollTop=0;
+}
+document.addEventListener("click",e=>{const g=e.target.closest("[data-go]");if(g){if(g.closest("#tabs"))S.stack=["feed"];show(g.dataset.go)}});
+$("back").onclick=()=>{if(S.stack.length>1){S.stack.pop();log("back");show(S.stack[S.stack.length-1],false)}};
+// verify
+$("sendCode").onclick=()=>{const v=$("email").value.trim().toLowerCase();
+  if(!/^[^@\s]+@(miami\.edu|umiami\.edu)$/.test(v)){$("emailErr").textContent="Use your UM email (ending in @miami.edu).";log("email rejected");return}
+  $("emailErr").textContent="";$("codeBox").style.display="block";log("code sent")};
+$("checkCode").onclick=()=>{if($("code").value.trim()!=="246810"){$("codeErr").textContent="That code doesn't match. Try 246810 in this demo.";log("wrong code");return}
+  log("verified");show("building")};
+// building
+$("bldList").innerHTML=BUILDINGS.map(b=>`<div class="bldopt" data-b="${b.id}"><b>${b.name}</b><div class="muted">${b.cluster} cluster</div></div>`).join("")+`<div class="bldopt" data-b="other"><b>Somewhere else</b><div class="muted">We'll tell you when your building opens</div></div>`;
+$("bldList").onclick=e=>{const o=e.target.closest(".bldopt");if(!o)return;document.querySelectorAll(".bldopt").forEach(x=>x.classList.remove("sel"));o.classList.add("sel");S.bld=o.dataset.b;$("bldNext").disabled=false;log("building: "+S.bld)};
+$("bldNext").onclick=()=>{if(S.bld==="other"){alert("Thanks. Your building is not open yet, so you'll see the Red Road Commons demo.");S.bld="rrc"}
+  $("hdrBld").textContent=BUILDINGS.find(b=>b.id===S.bld).name;S.stack=["feed"];show("feed")};
+// feed
+document.querySelector(".seg").onclick=e=>{const b=e.target.closest("button");if(!b)return;S.scope=b.dataset.scope;document.querySelectorAll(".seg button").forEach(x=>x.classList.toggle("on",x===b));log("scope: "+S.scope);renderFeed()};
+$("search").oninput=()=>renderFeed();
+function renderFeed(){const me=BUILDINGS.find(b=>b.id===S.bld)||BUILDINGS[0];const q=$("search").value.toLowerCase();
+  const list=ITEMS.filter(i=>{const ib=BUILDINGS.find(b=>b.id===i.b);return(S.scope==="bld"?i.b===me.id:ib.cluster===me.cluster)&&i.n.toLowerCase().includes(q)});
+  $("feedCount").textContent=list.length+" items "+(S.scope==="bld"?"in "+me.name:"in the "+me.cluster+" cluster");
+  $("feed").innerHTML=list.map(i=>`<div class="item" data-i="${i.id}"><div class="ph">${i.e}</div><div class="t"><div class="pr">${fmt(i.p)}</div>${i.n}<div class="muted" style="font-size:12px">${BUILDINGS.find(b=>b.id===i.b).name}</div></div></div>`).join("")||'<p class="muted">Nothing here yet. Try the nearby cluster or a Wanted List.</p>'}
+$("feed").onclick=e=>{const c=e.target.closest(".item");if(!c)return;S.item=ITEMS.find(i=>i.id==c.dataset.i);const i=S.item;
+  $("itPh").innerHTML=i.e;$("itName").textContent=i.n;$("itPrice").textContent=fmt(i.p);
+  const same=i.b===S.bld;$("itPills").innerHTML=`<span class="pill">Verified UM student</span><span class="pill ${same?"":"o"}">${same?"Same building":"Nearby building"}</span><span class="pill">${i.c}</span>`;
+  $("itDesc").textContent=i.d;$("itDisc").style.display=i.disc?"block":"none";$("itDisc").textContent=i.disc||"";
+  $("itPickup").textContent=BUILDINGS.find(b=>b.id===i.b).name+" lobby";log("open item: "+i.n);show("item")};
+$("msgBtn").onclick=()=>{log("message seller tapped");alert("Messaging is simulated in this prototype. The founder relays messages by hand during the pilot.")};
+// checkout
+$("protect").onchange=()=>{log("protected payment: "+$("protect").checked);renderCheckout()};
+function renderCheckout(){const i=S.item;if(!i)return;const[f,r]=fee(i.p);const pr=$("protect").checked?Math.round(i.p*3)/100:0;
+  $("coName").textContent=i.n;$("coPrice").textContent=fmt(i.p);$("coFee").textContent=f?fmt(f):"Free";$("coRule").textContent=r;
+  $("protRow").style.display=pr?"flex":"none";$("coProt").textContent=fmt(pr);$("coTot").textContent=fmt(i.p+f+pr)}
+$("payBtn").onclick=()=>{const p=$("protect").checked;log("PURCHASE confirmed, protected="+p);
+  $("doneTitle").textContent="Pickup arranged";$("doneText").textContent=p?"Your payment is on hold until you confirm pickup.":"Your payment went to the seller.";
+  $("doneSteps").innerHTML=`<b>Next steps</b><br>1. The seller confirms a time within 24 hours.<br>2. Meet in the ${BUILDINGS.find(b=>b.id===S.item.b).name} lobby.<br>3. ${p?"Tap \"I picked it up\" to release payment.":"Check the item before you leave."}`;show("done")};
+$("cashBtn").onclick=()=>{log("CHOSE CASH / off platform");$("doneTitle").textContent="Seller notified";$("doneText").textContent="You'll arrange payment with the seller directly. Protected Payment does not apply.";
+  $("doneSteps").innerHTML="<b>Next steps</b><br>1. The seller replies with a pickup time.<br>2. Meet in the lobby and pay in person.";show("done")};
+// wanted
+$("wSubmit").onclick=()=>{if(!$("wItems").value.trim()||!$("wBudget").value){$("wErr").textContent="Add at least one item and a budget.";log("wanted incomplete");return}
+  $("wErr").textContent="";log("WANTED LIST submitted: "+$("wItems").value.trim().split("\n").length+" items, "+$("wBudget").value);
+  $("doneTitle").textContent="Wanted List received";$("doneText").textContent="We'll send your first match update within 3 business days.";
+  $("doneSteps").innerHTML="<b>What happens now</b><br>1. We check listings and message students moving out.<br>2. You pay the 10% only on items you approve.<br>3. You approve each item before paying for it.";show("done")};
+// log tools
+$("copyLog").onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(S.log.join("\n"));$("copyLog").textContent="Copied"};
+$("resetAll").onclick=()=>{try{localStorage.removeItem("cx_log")}catch(e){}location.reload()};
+log("session start");
+</script>
+</body>
+</html>

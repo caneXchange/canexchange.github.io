@@ -62,28 +62,28 @@ label{font-size:14px;font-weight:600;display:block;margin-top:14px}
 <div class="wrap">
 <div class="phone">
   <header><button class="back" id="back" aria-label="Back">&#8249;</button><b>CanesXchange</b><span class="bld" id="hdrBld"></span></header>
-  <span class="demo">PROTOTYPE v1</span>
+  <span class="demo">PROTOTYPE v2</span>
   <main>
     <!-- 1 Welcome -->
     <section class="screen on" id="s-welcome">
       <h1>Furnish from the students in your own building.</h1>
       <p class="muted">Buy and sell household items with verified UM students who live where you live. Walkable pickups, no strangers from across the city.</p>
       <div class="box"><span class="pill">Verified</span><span class="pill">Same building</span><span class="pill">Lobby pickup</span></div>
-      <button class="btn" data-go="verify">Get started with UM email</button>
+      <button class="btn" data-go="building">See items near me</button>
       <p class="muted" style="margin-top:14px;font-size:12px">Prototype built by a UM student. Listings are samples and no real payment is taken. Not officially run or endorsed by the University of Miami.</p>
     </section>
 
     <!-- 2 Verify -->
     <section class="screen" id="s-verify">
-      <h1>Verify you are a UM student</h1>
-      <p class="muted">Only students with a UM email can buy, sell or message. Verification confirms identity, not item condition.</p>
-      <label for="email">UM email</label>
-      <input id="email" type="email" placeholder="name@miami.edu" autocomplete="off">
+      <h1>Verify your school email to continue</h1>
+      <p class="muted">Anyone can browse. Only verified students can buy, sell or message. Verification confirms identity, not item condition. In this demo no email is sent.</p>
+      <label for="email">School email</label>
+      <input id="email" type="email" value="student@miami.edu" placeholder="name@miami.edu" autocomplete="off">
       <div class="err" id="emailErr"></div>
       <button class="btn" id="sendCode">Send code</button>
       <div id="codeBox" style="display:none">
         <label for="code">6 digit code</label>
-        <input id="code" inputmode="numeric" maxlength="6" placeholder="Demo code: 246810">
+        <input id="code" inputmode="numeric" maxlength="6" value="246810" placeholder="Demo code: 246810">
         <div class="err" id="codeErr"></div>
         <button class="btn" id="checkCode">Verify</button>
       </div>
@@ -116,7 +116,7 @@ label{font-size:14px;font-weight:600;display:block;margin-top:14px}
       <p class="muted" id="itDesc"></p>
       <div class="box warn" id="itDisc" style="display:none"></div>
       <div class="box"><b>Pickup:</b> <span id="itPickup"></span><br>Meet in the lobby or mailroom. Book the service elevator for large items.</div>
-      <button class="btn" data-go="checkout">Buy now</button>
+      <button class="btn" id="buyBtn">Buy now</button>
       <button class="btn alt" id="msgBtn">Message seller</button>
     </section>
 
@@ -184,7 +184,7 @@ label{font-size:14px;font-weight:600;display:block;margin-top:14px}
   <h2>How to test this prototype</h2>
   <p><b>Task A.</b> "You just moved in and need a desk. Find one and buy it."</p>
   <p><b>Task B.</b> "You need several items before classes. Ask the service to find them for you."</p>
-  <p>Any <code>@miami.edu</code> address works. Demo code: <code>246810</code>.</p>
+  <p>Browsing needs no sign in. Verification appears at Buy now, Message seller and Wanted List, with a demo email and code already filled in.</p>
   <p>The <b>Log</b> tab records each step with a timestamp so completion time and backtracking can be written up after the session.</p>
   <p>What is simulated: verification email, listings, payment hold and matching. A person does the matching by hand during the pilot.</p>
 </aside>
@@ -195,7 +195,10 @@ const BUILDINGS=[
  {id:"link",name:"Link at Douglas",cluster:"Douglas Road",units:733},
  {id:"motion",name:"Motion at Dadeland",cluster:"Dadeland",units:294},
  {id:"valencia",name:"Valencia",cluster:"South Miami",units:301},
- {id:"uinn",name:"University Inn",cluster:"South Miami",units:146}];
+ {id:"uinn",name:"University Inn",cluster:"South Miami",units:146},
+ {id:"green",name:"Greenhouse at Dadeland",cluster:"Dadeland"},
+ {id:"amli",name:"AMLI Dadeland",cluster:"Dadeland"},
+ {id:"toscana",name:"Toscana",cluster:"Toscana"}];
 const ITEMS=[
  {id:1,n:"IKEA desk, white",p:30,e:"&#128421;",b:"rrc",c:"Like new",d:"120 x 60 cm. Moving to a smaller unit."},
  {id:2,n:"Office chair",p:25,e:"&#129681;",b:"rrc",c:"Good",d:"Adjustable height, mesh back."},
@@ -208,8 +211,21 @@ const ITEMS=[
  {id:9,n:"Box fan",p:4,e:"&#127744;",b:"rrc",c:"Fair",d:"Loud on high, fine on low."},
  {id:10,n:"Dresser, 4 drawer",p:45,e:"&#129695;",b:"link",c:"Good",d:"Easy to carry in two pieces."},
  {id:11,n:"Kitchen set (pots, utensils)",p:10,e:"&#127859;",b:"motion",c:"Good",d:"Everything for a first week kitchen."},
- {id:12,n:"Bookshelf",p:18,e:"&#128218;",b:"link",c:"Good",d:"5 shelves."}];
-const S={stack:["welcome"],bld:null,item:null,scope:"bld",log:[]};
+ {id:12,n:"Bookshelf",p:18,e:"&#128218;",b:"link",c:"Good",d:"5 shelves."},
+ {id:13,n:"Study desk",p:35,e:"&#128421;",b:"motion",c:"Good",d:"Fits a small bedroom."},
+ {id:14,n:"Desk chair",p:20,e:"&#129681;",b:"motion",c:"Good",d:"Adjustable height."},
+ {id:15,n:"Rice cooker (3 cup)",p:12,e:"&#127834;",b:"motion",c:"Like new",d:"Used for one semester."},
+ {id:16,n:"Writing desk",p:40,e:"&#128421;",b:"link",c:"Like new",d:"Moving out in December."},
+ {id:17,n:"Small desk",p:25,e:"&#128421;",b:"valencia",c:"Fair",d:"Light scratches on top."},
+ {id:18,n:"Corner desk",p:30,e:"&#128421;",b:"uinn",c:"Good",d:"Good for a studio."},
+ {id:19,n:"IKEA desk, black",p:35,e:"&#128421;",b:"green",c:"Good",d:"Easy to take apart."},
+ {id:20,n:"Floor lamp",p:10,e:"&#128161;",b:"green",c:"Good",d:"Bulb included."},
+ {id:21,n:"Desk with drawer",p:45,e:"&#128421;",b:"amli",c:"Like new",d:"One drawer, solid top."},
+ {id:22,n:"Office chair",p:25,e:"&#129681;",b:"amli",c:"Good",d:"Mesh back."},
+ {id:23,n:"Folding desk",p:20,e:"&#128421;",b:"toscana",c:"Good",d:"Folds flat."},
+ {id:24,n:"Kitchen set",p:15,e:"&#127859;",b:"toscana",c:"Good",d:"Pots and utensils."}];
+const S={stack:["welcome"],bld:null,item:null,scope:"bld",log:[],verified:false,after:null};
+function needVerify(next){if(S.verified){next();return}S.after=next;log("verification requested");show("verify")}
 const $=id=>document.getElementById(id);
 const fmt=v=>"$"+v.toFixed(2).replace(/\.00$/,"");
 function log(ev){const t=new Date();S.log.push(t.toLocaleTimeString()+"  "+ev);try{localStorage.setItem("cx_log",JSON.stringify(S.log))}catch(e){}}
@@ -233,10 +249,10 @@ document.addEventListener("click",e=>{const g=e.target.closest("[data-go]");if(g
 $("back").onclick=()=>{if(S.stack.length>1){S.stack.pop();log("back");show(S.stack[S.stack.length-1],false)}};
 // verify
 $("sendCode").onclick=()=>{const v=$("email").value.trim().toLowerCase();
-  if(!/^[^@\s]+@(miami\.edu|umiami\.edu)$/.test(v)){$("emailErr").textContent="Use your UM email (ending in @miami.edu).";log("email rejected");return}
+  if(!/^[^@\s]+@[^@\s]+\.edu$/.test(v)){$("emailErr").textContent="Use your school email (ending in .edu).";log("email rejected");return}
   $("emailErr").textContent="";$("codeBox").style.display="block";log("code sent")};
 $("checkCode").onclick=()=>{if($("code").value.trim()!=="246810"){$("codeErr").textContent="That code doesn't match. Try 246810 in this demo.";log("wrong code");return}
-  log("verified");show("building")};
+  S.verified=true;log("verified");const n=S.after;S.after=null;n?n():show("feed")};
 // building
 $("bldList").innerHTML=BUILDINGS.map(b=>`<div class="bldopt" data-b="${b.id}"><b>${b.name}</b><div class="muted">${b.cluster} cluster</div></div>`).join("")+`<div class="bldopt" data-b="other"><b>Somewhere else</b><div class="muted">We'll tell you when your building opens</div></div>`;
 $("bldList").onclick=e=>{const o=e.target.closest(".bldopt");if(!o)return;document.querySelectorAll(".bldopt").forEach(x=>x.classList.remove("sel"));o.classList.add("sel");S.bld=o.dataset.b;$("bldNext").disabled=false;log("building: "+S.bld)};
@@ -254,7 +270,8 @@ $("feed").onclick=e=>{const c=e.target.closest(".item");if(!c)return;S.item=ITEM
   const same=i.b===S.bld;$("itPills").innerHTML=`<span class="pill">Verified UM student</span><span class="pill ${same?"":"o"}">${same?"Same building":"Nearby building"}</span><span class="pill">${i.c}</span>`;
   $("itDesc").textContent=i.d;$("itDisc").style.display=i.disc?"block":"none";$("itDisc").textContent=i.disc||"";
   $("itPickup").textContent=BUILDINGS.find(b=>b.id===i.b).name+" lobby";log("open item: "+i.n);show("item")};
-$("msgBtn").onclick=()=>{log("message seller tapped");alert("Messaging is simulated in this prototype. The founder relays messages by hand during the pilot.")};
+$("buyBtn").onclick=()=>needVerify(()=>show("checkout"));
+$("msgBtn").onclick=()=>needVerify(()=>{log("message seller tapped");alert("Messaging is simulated in this prototype. The founder relays messages by hand during the pilot.")});
 // checkout
 $("protect").onchange=()=>{log("protected payment: "+$("protect").checked);renderCheckout()};
 function renderCheckout(){const i=S.item;if(!i)return;const[f,r]=fee(i.p);const pr=$("protect").checked?Math.round(i.p*3)/100:0;
@@ -267,7 +284,8 @@ $("cashBtn").onclick=()=>{log("CHOSE CASH / off platform");$("doneTitle").textCo
   $("doneSteps").innerHTML="<b>Next steps</b><br>1. The seller replies with a pickup time.<br>2. Meet in the lobby and pay in person.";show("done")};
 // wanted
 $("wSubmit").onclick=()=>{if(!$("wItems").value.trim()||!$("wBudget").value){$("wErr").textContent="Add at least one item and a budget.";log("wanted incomplete");return}
-  $("wErr").textContent="";log("WANTED LIST submitted: "+$("wItems").value.trim().split("\n").length+" items, "+$("wBudget").value);
+  $("wErr").textContent="";needVerify(doWanted)};
+function doWanted(){log("WANTED LIST submitted: "+$("wItems").value.trim().split("\n").length+" items, "+$("wBudget").value);
   $("doneTitle").textContent="Wanted List received";$("doneText").textContent="We'll send your first match update within 3 business days.";
   $("doneSteps").innerHTML="<b>What happens now</b><br>1. We check listings and message students moving out.<br>2. You pay the 10% only on items you approve.<br>3. You approve each item before paying for it.";show("done")};
 // log tools
