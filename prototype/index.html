@@ -120,7 +120,19 @@ label{font-size:14px;font-weight:600;display:block;margin-top:14px}
       <div class="box warn" id="itDisc" style="display:none"></div>
       <div class="box"><b>Pickup:</b> <span id="itPickup"></span><br>Meet in the lobby or mailroom. Book the service elevator for large items.</div>
       <button class="btn" id="buyBtn">Buy now</button>
+      <button class="btn alt" id="offerBtn" style="display:none">Make an offer</button>
       <button class="btn alt" id="msgBtn">Message seller</button>
+    </section>
+
+    <!-- Offer -->
+    <section class="screen" id="s-offer">
+      <h1>Make an offer</h1>
+      <p class="muted" id="ofInfo"></p>
+      <label for="ofAmt">Your offer (USD)</label>
+      <input id="ofAmt" type="number" inputmode="decimal" min="1" placeholder="Enter an amount">
+      <div class="err" id="ofErr"></div>
+      <button class="btn" id="ofSend">Send offer</button>
+      <p class="muted" style="font-size:12px;margin-top:12px">The seller set a private lowest price. Offers at or above it are accepted right away. In this demo the seller is simulated.</p>
     </section>
 
     <!-- 6 Checkout -->
@@ -240,7 +252,7 @@ function show(name,push=true){
   $("s-"+name).classList.add("on");
   if(push&&S.stack[S.stack.length-1]!==name)S.stack.push(name);
   $("back").style.visibility=S.stack.length>1&&name!=="done"?"visible":"hidden";
-  const app=["feed","item","checkout","done","wanted","sell","log"].includes(name);
+  const app=["feed","item","offer","checkout","done","wanted","sell","log"].includes(name);
   $("tabs").style.display=app?"flex":"none";
   document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.go===name));
   if(name==="feed")renderFeed();
@@ -270,17 +282,24 @@ function renderFeed(){const me=BUILDINGS.find(b=>b.id===S.bld)||BUILDINGS[0];con
   $("feedCount").textContent=list.length+" items "+(S.scope==="bld"?"in "+me.name:"in the "+me.cluster+" cluster");
   $("feed").innerHTML=list.map(i=>`<div class="item" data-i="${i.id}"><div class="ph">${i.e}</div><div class="t"><div class="pr">${fmt(i.p)}</div>${i.n}<div class="muted" style="font-size:12px">${BUILDINGS.find(b=>b.id===i.b).name}</div></div></div>`).join("")||'<p class="muted">Nothing here yet. Try the nearby cluster or a Wanted List.</p>'}
 $("feed").onclick=e=>{const c=e.target.closest(".item");if(!c)return;S.item=ITEMS.find(i=>i.id==c.dataset.i);const i=S.item;
-  $("itPh").innerHTML=i.e;$("itName").textContent=i.n;$("itPrice").textContent=fmt(i.p);
-  const same=i.b===S.bld;$("itPills").innerHTML=`<span class="pill">Verified UM student</span><span class="pill ${same?"":"o"}">${same?"Same building":"Nearby building"}</span><span class="pill">${i.c}</span>`;
+  S.offerPrice=null;$("offerBtn").style.display=i.offer?"block":"none";$("itPh").innerHTML=i.e;$("itName").textContent=i.n;$("itPrice").textContent=fmt(i.p);
+  const same=i.b===S.bld;$("itPills").innerHTML=`<span class="pill">Verified UM student</span><span class="pill ${same?"":"o"}">${same?"Same building":"Nearby building"}</span><span class="pill">${i.c}</span><span class="pill ${i.offer?"o":""}">${i.offer?"Open to offers":"Fixed price"}</span>`;
   $("itDesc").textContent=i.d;$("itDisc").style.display=i.disc?"block":"none";$("itDisc").textContent=i.disc||"";
   $("itPickup").textContent=BUILDINGS.find(b=>b.id===i.b).name+" lobby";log("open item: "+i.n);show("item")};
+ITEMS.forEach(i=>{i.offer=/desk|chair|table|closet/i.test(i.n)&&!/sofa/i.test(i.n);i.floor=Math.round(i.p*0.75)});
+$("offerBtn").onclick=()=>needVerify(()=>{const i=S.item;$("ofInfo").textContent=i.n+". Listed at "+fmt(i.p)+".";$("ofAmt").value="";$("ofErr").textContent="";log("offer screen: "+i.n);show("offer")});
+$("ofSend").onclick=()=>{const i=S.item,v=parseFloat($("ofAmt").value);
+  if(!(v>0)){$("ofErr").textContent="Enter an amount.";return}
+  if(v>=i.p){log("OFFER at or above list: "+v);S.offerPrice=null;show("checkout");return}
+  if(v<i.floor){$("ofErr").textContent="The seller cannot accept this offer. You can try a higher amount or buy at the listed price.";log("OFFER declined: "+v+" of "+i.p);return}
+  S.offerPrice=v;log("OFFER accepted: "+v+" of "+i.p);show("checkout")};
 $("buyBtn").onclick=()=>needVerify(()=>show("checkout"));
 $("msgBtn").onclick=()=>needVerify(()=>{log("message seller tapped");alert("Messaging is simulated in this prototype. The founder relays messages by hand during the pilot.")});
 // checkout
 $("protect").onchange=()=>{log("protected payment: "+$("protect").checked);renderCheckout()};
-function renderCheckout(){const i=S.item;if(!i)return;const[f,r]=fee(i.p);const pr=$("protect").checked?Math.round(i.p*3)/100:0;
-  $("coName").textContent=i.n;$("coPrice").textContent=fmt(i.p);$("coFee").textContent=f?fmt(f):"Free";$("coRule").textContent=r;
-  $("protRow").style.display=pr?"flex":"none";$("coProt").textContent=fmt(pr);$("coTot").textContent=fmt(i.p+f+pr)}
+function renderCheckout(){const i=S.item;if(!i)return;const pp=S.offerPrice==null?i.p:S.offerPrice;const[f,r]=fee(pp);const pr=$("protect").checked?Math.round(pp*3)/100:0;
+  $("coName").textContent=i.n;$("coPrice").textContent=fmt(pp);$("coFee").textContent=f?fmt(f):"Free";$("coRule").textContent=r;
+  $("protRow").style.display=pr?"flex":"none";$("coProt").textContent=fmt(pr);$("coTot").textContent=fmt(pp+f+pr)}
 $("payBtn").onclick=()=>{const p=$("protect").checked;log("PURCHASE confirmed, protected="+p);
   $("doneTitle").textContent="Pickup arranged";$("doneText").textContent=p?"Your payment is on hold until you confirm pickup.":"Your payment went to the seller.";
   $("doneSteps").innerHTML=`<b>Next steps</b><br>1. The seller confirms a time within 24 hours.<br>2. Meet in the ${BUILDINGS.find(b=>b.id===S.item.b).name} lobby.<br>3. ${p?"Tap \"I picked it up\" to release payment.":"Check the item before you leave."}`;show("done")};
