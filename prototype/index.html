@@ -56,6 +56,9 @@ label{font-size:14px;font-weight:600;display:block;margin-top:14px}
 .check{font-size:56px;text-align:center;margin-top:20px}
 .demo{position:absolute;top:58px;right:10px;font-size:10px;background:#000;color:#fff;opacity:.55;padding:2px 6px;border-radius:4px}
 #log{font-family:ui-monospace,monospace;font-size:12px;background:#fff;border-radius:8px;padding:8px;max-height:260px;overflow:auto;white-space:pre-wrap}
+.ph img,.big img{width:100%;height:100%;object-fit:cover;display:block}
+.big img{object-fit:contain}
+.item .ph,.big{overflow:hidden}
 </style>
 </head>
 <body>
@@ -200,30 +203,31 @@ const BUILDINGS=[
  {id:"amli",name:"AMLI Dadeland",cluster:"Dadeland"},
  {id:"toscana",name:"Toscana",cluster:"Toscana"}];
 const ITEMS=[
- {id:1,n:"IKEA desk, white",p:30,e:"&#128421;",b:"rrc",c:"Like new",d:"120 x 60 cm. Moving to a smaller unit."},
- {id:2,n:"Office chair",p:25,e:"&#129681;",b:"rrc",c:"Good",d:"Adjustable height, mesh back."},
- {id:3,n:"Rice cooker (6 cup)",p:15,e:"&#127834;",b:"rrc",c:"Good",d:"Works perfectly, inner pot included."},
  {id:4,n:"3 seat sofa",p:180,e:"&#128715;",b:"valencia",c:"Good",d:"Grey fabric, no pets, no smoking.",disc:"Seller condition disclosure dated Oct 20, 2026: no stains, no tears, no pests seen. Upholstery is sold only with a dated disclosure."},
- {id:5,n:"Floor lamp",p:12,e:"&#128161;",b:"rrc",c:"Like new",d:"Warm LED bulb included."},
- {id:6,n:"IKEA cart (RASKOG)",p:20,e:"&#128722;",b:"uinn",c:"Good",d:"Teal, 3 shelves."},
- {id:7,n:"24 inch monitor",p:60,e:"&#128250;",b:"rrc",c:"Good",d:"HDMI cable included."},
- {id:8,n:"Dining table + 2 chairs",p:70,e:"&#127869;",b:"valencia",c:"Fair",d:"Small scratches on top."},
- {id:9,n:"Box fan",p:4,e:"&#127744;",b:"rrc",c:"Fair",d:"Loud on high, fine on low."},
- {id:10,n:"Dresser, 4 drawer",p:45,e:"&#129695;",b:"link",c:"Good",d:"Easy to carry in two pieces."},
- {id:11,n:"Kitchen set (pots, utensils)",p:10,e:"&#127859;",b:"motion",c:"Good",d:"Everything for a first week kitchen."},
- {id:12,n:"Bookshelf",p:18,e:"&#128218;",b:"link",c:"Good",d:"5 shelves."},
- {id:13,n:"Study desk",p:35,e:"&#128421;",b:"motion",c:"Good",d:"Fits a small bedroom."},
- {id:14,n:"Desk chair",p:20,e:"&#129681;",b:"motion",c:"Good",d:"Adjustable height."},
- {id:15,n:"Rice cooker (3 cup)",p:12,e:"&#127834;",b:"motion",c:"Like new",d:"Used for one semester."},
- {id:16,n:"Writing desk",p:40,e:"&#128421;",b:"link",c:"Like new",d:"Moving out in December."},
- {id:17,n:"Small desk",p:25,e:"&#128421;",b:"valencia",c:"Fair",d:"Light scratches on top."},
- {id:18,n:"Corner desk",p:30,e:"&#128421;",b:"uinn",c:"Good",d:"Good for a studio."},
- {id:19,n:"IKEA desk, black",p:35,e:"&#128421;",b:"green",c:"Good",d:"Easy to take apart."},
- {id:20,n:"Floor lamp",p:10,e:"&#128161;",b:"green",c:"Good",d:"Bulb included."},
- {id:21,n:"Desk with drawer",p:45,e:"&#128421;",b:"amli",c:"Like new",d:"One drawer, solid top."},
- {id:22,n:"Office chair",p:25,e:"&#129681;",b:"amli",c:"Good",d:"Mesh back."},
- {id:23,n:"Folding desk",p:20,e:"&#128421;",b:"toscana",c:"Good",d:"Folds flat."},
- {id:24,n:"Kitchen set",p:15,e:"&#127859;",b:"toscana",c:"Good",d:"Pots and utensils."}];
+ {id:1,n:"Study desk with storage drawers",p:70,e:"<img src='img/desk.jpg' alt=''>",b:"rrc",c:"Good",d:"Desk with shelf and drawer unit. Personal items blurred in the photo."},
+ {id:2,n:"Office chair",p:40,e:"<img src='img/chair.jpg' alt=''>",b:"rrc",c:"Good",d:"Adjustable height, mesh back."},
+ {id:3,n:"Cosori air fryer",p:60,e:"<img src='img/airfryer.jpg' alt=''>",b:"rrc",c:"Like new",d:"Works perfectly."},
+ {id:5,n:"Bedside table with 2 drawers",p:15,e:"<img src='img/sidetable.jpg' alt=''>",b:"rrc",c:"Good",d:"Fabric drawers, light to carry."},
+ {id:7,n:"Fabric closet",p:30,e:"<img src='img/closet.jpg' alt=''>",b:"rrc",c:"Good",d:"Zip cover, easy to take apart."},
+ {id:9,n:"Laundry basket",p:5,e:"<img src='img/basket.jpg' alt=''>",b:"rrc",c:"Good",d:"Plastic, with handles."},
+ {id:25,n:"GE window AC",p:75,e:"<img src='img/ac.jpg' alt=''>",b:"rrc",c:"Good",d:"Cools a bedroom well."},
+ {id:8,n:"Dining table and chairs",p:30,e:"<img src='img/dining.jpg' alt=''>",b:"valencia",c:"Good",d:"Folding chairs included."},
+ {id:17,n:"Study desk with storage drawers",p:70,e:"<img src='img/desk.jpg' alt=''>",b:"valencia",c:"Good",d:"Desk with shelf and drawer unit. Personal items blurred in the photo."},
+ {id:6,n:"Standing mirror",p:5,e:"<img src='img/mirror.jpg' alt=''>",b:"uinn",c:"Good",d:"Full length, gold frame."},
+ {id:18,n:"Study desk with storage drawers",p:70,e:"<img src='img/desk.jpg' alt=''>",b:"uinn",c:"Good",d:"Desk with shelf and drawer unit. Personal items blurred in the photo."},
+ {id:10,n:"Bedside table with 2 drawers",p:15,e:"<img src='img/sidetable.jpg' alt=''>",b:"link",c:"Good",d:"Fabric drawers, light to carry."},
+ {id:12,n:"Bathroom scale",p:15,e:"<img src='img/scale.jpg' alt=''>",b:"link",c:"Good",d:"Digital display."},
+ {id:16,n:"Study desk with storage drawers",p:70,e:"<img src='img/desk.jpg' alt=''>",b:"link",c:"Good",d:"Desk with shelf and drawer unit. Personal items blurred in the photo."},
+ {id:11,n:"Dish rack and drying mat",p:10,e:"<img src='img/dishrack.jpg' alt=''>",b:"motion",c:"Good",d:"Rack and mat together."},
+ {id:13,n:"Study desk with storage drawers",p:70,e:"<img src='img/desk.jpg' alt=''>",b:"motion",c:"Good",d:"Desk with shelf and drawer unit. Personal items blurred in the photo."},
+ {id:14,n:"Office chair",p:40,e:"<img src='img/chair.jpg' alt=''>",b:"motion",c:"Good",d:"Adjustable height, mesh back."},
+ {id:15,n:"Toaster",p:10,e:"<img src='img/toaster.jpg' alt=''>",b:"motion",c:"Good",d:"Two slices."},
+ {id:19,n:"Study desk with storage drawers",p:70,e:"<img src='img/desk.jpg' alt=''>",b:"green",c:"Good",d:"Desk with shelf and drawer unit. Personal items blurred in the photo."},
+ {id:20,n:"Lasko pedestal fan",p:16,e:"<img src='img/fan.jpg' alt=''>",b:"green",c:"Good",d:"16 inch, oscillating."},
+ {id:21,n:"Study desk with storage drawers",p:70,e:"<img src='img/desk.jpg' alt=''>",b:"amli",c:"Good",d:"Desk with shelf and drawer unit. Personal items blurred in the photo."},
+ {id:22,n:"Office chair",p:40,e:"<img src='img/chair.jpg' alt=''>",b:"amli",c:"Good",d:"Adjustable height, mesh back."},
+ {id:23,n:"Study desk with storage drawers",p:70,e:"<img src='img/desk.jpg' alt=''>",b:"toscana",c:"Good",d:"Desk with shelf and drawer unit. Personal items blurred in the photo."},
+ {id:24,n:"Cosori air fryer",p:60,e:"<img src='img/airfryer.jpg' alt=''>",b:"toscana",c:"Like new",d:"Works perfectly."}];
 const S={stack:["welcome"],bld:null,item:null,scope:"bld",log:[],verified:false,after:null};
 function needVerify(next){if(S.verified){next();return}S.after=next;log("verification requested");show("verify")}
 const $=id=>document.getElementById(id);
