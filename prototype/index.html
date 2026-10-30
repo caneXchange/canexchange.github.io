@@ -251,7 +251,7 @@ function fee(p){return[0,"0% when you buy directly"]}
 function show(name,push=true){
   document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on"));
   $("s-"+name).classList.add("on");
-  if(push&&S.stack[S.stack.length-1]!==name)S.stack.push(name);
+  if(push&&S.stack[S.stack.length-1]!==name){S.stack.push(name);history.pushState({},"")}
   $("back").style.visibility=S.stack.length>1&&name!=="done"?"visible":"hidden";
   const app=["feed","item","offer","checkout","done","wanted","sell","log"].includes(name);
   $("tabs").style.display=app?"flex":"none";
@@ -262,8 +262,10 @@ function show(name,push=true){
   log("screen: "+name);
   document.querySelector("main").scrollTop=0;
 }
-document.addEventListener("click",e=>{const g=e.target.closest("[data-go]");if(g){if(g.closest("#tabs"))S.stack=["feed"];show(g.dataset.go)}});
-$("back").onclick=()=>{if(S.stack.length>1){S.stack.pop();log("back");show(S.stack[S.stack.length-1],false)}};
+document.addEventListener("click",e=>{const g=e.target.closest("[data-go]");if(g){if(g.closest("#tabs"))S.stack=g.dataset.go==="feed"?["building"]:["building","feed"];show(g.dataset.go)}});
+function goBack(){if(S.stack.length<2)return;S.stack.pop();while(S.verified&&S.stack[S.stack.length-1]==="verify"&&S.stack.length>1)S.stack.pop();log("back");show(S.stack[S.stack.length-1],false)}
+$("back").onclick=()=>history.back();
+window.addEventListener("popstate",goBack);
 // verify
 $("sendCode").onclick=()=>{const v=$("email").value.trim().toLowerCase();
   if(!/^[^@\s]+@[^@\s]+\.edu$/.test(v)){$("emailErr").textContent="Use your school email (ending in .edu).";log("email rejected");return}
@@ -274,7 +276,9 @@ $("checkCode").onclick=()=>{if($("code").value.trim()!=="246810"){$("codeErr").t
 $("bldList").innerHTML=BUILDINGS.map(b=>`<div class="bldopt" data-b="${b.id}"><b>${b.name}</b><div class="muted">${b.cluster} cluster</div></div>`).join("")+`<div class="bldopt" data-b="other"><b>Somewhere else</b><div class="muted">We'll tell you when your building opens</div></div>`;
 $("bldList").onclick=e=>{const o=e.target.closest(".bldopt");if(!o)return;document.querySelectorAll(".bldopt").forEach(x=>x.classList.remove("sel"));o.classList.add("sel");S.bld=o.dataset.b;$("bldNext").disabled=false;log("building: "+S.bld)};
 $("bldNext").onclick=()=>{if(S.bld==="other"){alert("Thanks. Your building is not open yet, so you'll see the Red Road Commons demo.");S.bld="rrc"}
-  $("hdrBld").textContent=BUILDINGS.find(b=>b.id===S.bld).name;S.stack=["feed"];show("feed")};
+  $("hdrBld").textContent=BUILDINGS.find(b=>b.id===S.bld).name;S.stack=["building"];show("feed")};
+$("hdrBld").style.cursor="pointer";
+$("hdrBld").onclick=()=>{if(S.bld)show("building")};
 // feed
 document.querySelector(".seg").onclick=e=>{const b=e.target.closest("button");if(!b)return;S.scope=b.dataset.scope;document.querySelectorAll(".seg button").forEach(x=>x.classList.toggle("on",x===b));log("scope: "+S.scope);renderFeed()};
 $("search").oninput=()=>renderFeed();
