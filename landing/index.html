@@ -20,7 +20,7 @@ body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;c
 .strip figure{margin:0;background:#fff;border-radius:12px;overflow:hidden}
 .strip img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block}
 .strip figcaption{color:var(--ink);font-size:13px;font-weight:600;padding:6px 8px}
-@media(max-width:520px){.strip{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.strip{gap:6px}.strip figcaption{font-size:11px;padding:4px 5px}}
 .cta{display:inline-block;margin-top:24px;background:var(--brand2);color:#fff;padding:14px 22px;border-radius:12px;font-weight:700;text-decoration:none;font-size:17px}
 .cta.ghost{background:transparent;border:1.5px solid rgba(255,255,255,.7);margin-left:8px}
 .where{margin-top:18px;font-size:14px;opacity:.85}
@@ -54,13 +54,13 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:13px}
   <div class="kicker">Used furniture marketplace for UM students</div>
   <h1>Buy and sell used furniture with UM students in your building.</h1>
   <p>Desks, chairs, kitchen gear and more from verified students nearby. No driving across Miami. Meet in the lobby.</p>
+  <a class="cta" href="#" data-tier="browse">I want to buy</a><a class="cta ghost" href="#" data-tier="seller">I want to sell</a>
   <div class="strip">
     <figure><img src="../prototype/img/desk.jpg" alt="Used desk"><figcaption>Desk $70</figcaption></figure>
     <figure><img src="../prototype/img/chair.jpg" alt="Used office chair"><figcaption>Chair $40</figcaption></figure>
     <figure><img src="../prototype/img/airfryer.jpg" alt="Used air fryer"><figcaption>Air fryer $60</figcaption></figure>
     <figure><img src="../prototype/img/fan.jpg" alt="Used fan"><figcaption>Fan $16</figcaption></figure>
   </div>
-  <a class="cta" href="#" data-tier="browse">I want to buy</a><a class="cta ghost" href="#" data-tier="seller">I want to sell</a>
   <div class="where">Free to join. Sellers pay nothing.</div>
 </div></div>
 
