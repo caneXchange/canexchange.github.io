@@ -49,6 +49,10 @@ label{font-size:14px;font-weight:600;display:block;margin-top:14px}
 .box.warn{background:var(--warn)}
 .toggle{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--line);border-radius:12px;padding:12px;margin-top:12px;cursor:pointer}
 .toggle input{width:20px;height:20px;margin:2px 0 0}
+.freebox{background:#e7f2ed;border:1.5px solid #0f5c45;border-radius:12px;padding:14px;margin:12px 0;text-align:center}
+.freebox b{display:block;font-size:20px;color:#0f5c45}
+details.opt{margin-top:16px;border-top:1px solid var(--line);padding-top:10px}
+details.opt summary{cursor:pointer;color:var(--muted);font-size:14px}
 .tabs{display:flex;border-top:1px solid var(--line)}
 .tabs button{flex:1;border:0;background:#fff;padding:10px 0 12px;font-size:12px;color:var(--muted);cursor:pointer}
 .tabs button.on{color:var(--brand);font-weight:700}
@@ -65,7 +69,7 @@ label{font-size:14px;font-weight:600;display:block;margin-top:14px}
 <div class="wrap">
 <div class="phone">
   <header><button class="back" id="back" aria-label="Back">&#8249;</button><b>CanesXchange</b><span class="bld" id="hdrBld"></span></header>
-  <span class="demo">PROTOTYPE v2</span>
+  <span class="demo">PROTOTYPE v3</span>
   <main>
     <!-- 1 Welcome -->
     <section class="screen on" id="s-welcome">
@@ -146,12 +150,14 @@ label{font-size:14px;font-weight:600;display:block;margin-top:14px}
       <h1>Review and pay</h1>
       <div class="row"><span id="coName"></span><span id="coPrice"></span></div>
       <div class="row"><span>Service fee <span class="muted">(<span id="coRule"></span>)</span></span><span id="coFee"></span></div>
-      <label class="toggle" for="protect"><input type="checkbox" id="protect"><span><b>Protected Payment (+3%)</b><br><span class="muted">Your money is held until you confirm you picked up the item. If the seller never shows, you are refunded.</span></span></label>
       <div class="row" id="protRow" style="display:none"><span>Protected Payment</span><span id="coProt"></span></div>
       <div class="row tot"><span>Total</span><span id="coTot"></span></div>
-      <p class="muted" style="font-size:12px">Buying directly is free. Sellers pay nothing.</p>
+      <div class="freebox"><b id="freeHead">No service fee</b><span id="freeText"></span></div>
       <button class="btn" id="payBtn">Confirm purchase</button>
       <button class="btn alt" id="cashBtn">I'll pay the seller in person instead</button>
+      <details class="opt" id="optBox"><summary>Optional: add Protected Payment (+3%)</summary>
+        <label class="toggle" for="protect"><input type="checkbox" id="protect"><span><b>Add Protected Payment (+3%)</b><br><span class="muted">Your money is held until you confirm you picked up the item. If the seller never shows, you are refunded. You do not need this to buy.</span></span></label>
+      </details>
     </section>
 
     <!-- 7 Done -->
@@ -307,10 +313,12 @@ $("skipVerify").onclick=()=>{log("verification skipped");show(S.bld?"feed":"buil
 $("buyBtn").onclick=()=>needVerify(()=>show("checkout"));
 $("msgBtn").onclick=()=>needVerify(()=>{log("message seller tapped");alert("Messaging is simulated in this prototype. The founder relays messages by hand during the pilot.")});
 // checkout
+$("optBox").ontoggle=()=>{if($("optBox").open)log("opened Protected Payment option")};
 $("protect").onchange=()=>{log("protected payment: "+$("protect").checked);renderCheckout()};
 function renderCheckout(){const i=S.item;if(!i)return;const pp=S.offerPrice==null?i.p:S.offerPrice;const[f,r]=fee(pp);const pr=$("protect").checked?Math.round(pp*3)/100:0;
   $("coName").textContent=i.n;$("coPrice").textContent=fmt(pp);$("coFee").textContent=f?fmt(f):"Free";$("coRule").textContent=r;
-  $("protRow").style.display=pr?"flex":"none";$("coProt").textContent=fmt(pr);$("coTot").textContent=fmt(pp+f+pr)}
+  $("protRow").style.display=pr?"flex":"none";$("coProt").textContent=fmt(pr);$("coTot").textContent=fmt(pp+f+pr);
+  $("freeHead").textContent=pr?"You pay "+fmt(pp+f+pr):"No service fee";$("freeText").textContent=pr?"Includes the optional Protected Payment. Uncheck it to pay "+fmt(pp)+".":"You pay "+fmt(pp)+", the seller's price. Sellers pay nothing too."}
 $("payBtn").onclick=()=>{const p=$("protect").checked;log("PURCHASE confirmed, protected="+p);
   $("doneTitle").textContent="Pickup arranged";$("doneText").textContent=p?"Your payment is on hold until you confirm pickup.":"Your payment went to the seller.";
   $("doneSteps").innerHTML=`<b>Next steps</b><br>1. The seller confirms a time within 24 hours.<br>2. Meet in the ${BUILDINGS.find(b=>b.id===S.item.b).name} lobby.<br>3. ${p?"Tap \"I picked it up\" to release payment.":"Check the item before you leave."}`;show("done")};
