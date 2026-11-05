@@ -325,6 +325,7 @@ function doWanted(){log("WANTED LIST submitted: "+$("wItems").value.trim().split
 // log tools
 $("copyLog").onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(S.log.join("\n"));$("copyLog").textContent="Copied"};
 $("resetAll").onclick=()=>{try{localStorage.removeItem("cx_log")}catch(e){}location.reload()};
+{const d=new Date();$("wBy").min=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)}
 log("session start");
 </script>
 <script data-goatcounter="https://canesxchange.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
