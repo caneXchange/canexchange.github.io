@@ -124,6 +124,12 @@ document.querySelectorAll("[data-tier]").forEach(a => {
   a.href = a.dataset.tier === "seller" ? SELLER_FORM_URL : FORM_URL;
   a.target = "_blank";
   a.rel = "noopener";
+  a.addEventListener("click", () => {
+    const name = {browse: "click-buy", seller: "click-sell", wanted: "click-wanted", protected: "click-protected"}[a.dataset.tier];
+    if (window.goatcounter && window.goatcounter.count) {
+      window.goatcounter.count({path: name, title: a.textContent.trim(), event: true});
+    }
+  });
 });
 </script>
 <script data-goatcounter="https://canesxchange.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
