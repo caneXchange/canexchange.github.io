@@ -263,7 +263,7 @@ const ITEMS=[
  {id:22,n:"Office chair",p:40,e:"<img src='img/chair.jpg' alt=''>",b:"amli",c:"Good",d:"Adjustable height, mesh back."},
  {id:23,n:"Study desk with storage drawers",p:70,e:"<img src='img/desk.jpg' alt=''>",b:"toscana",c:"Good",d:"Desk with shelf and drawer unit. Personal items blurred in the photo."},
  {id:24,n:"Cosori air fryer",p:60,e:"<img src='img/airfryer.jpg' alt=''>",b:"toscana",c:"Like new",d:"Works perfectly."}];
-ITEMS.filter(i=>/img/(dining|toaster)./.test(i.e)).slice(0,2).forEach((x,k)=>ITEMS.push(Object.assign({},x,{id:900+k,b:"rrc",sold:true})));
+ITEMS.filter(i=>i.e.includes("dining.")||i.e.includes("toaster.")).slice(0,2).forEach((x,k)=>ITEMS.push(Object.assign({},x,{id:900+k,b:"rrc",sold:true})));
 const S={stack:["welcome"],bld:null,item:null,scope:"bld",log:[],verified:false,after:null};
 function needVerify(next){if(!S.verified)$("skipVerify").style.display="none";if(S.verified){next();return}S.after=next;log("verification requested");show("verify")}
 const $=id=>document.getElementById(id);
