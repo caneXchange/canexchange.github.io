@@ -76,7 +76,8 @@ details.opt summary{cursor:pointer;color:var(--muted);font-size:14px}
       <h1>Furnish from the students in your own building.</h1>
       <p class="muted">Buy and sell household items with verified UM students who live where you live. Walkable pickups, no strangers from across the city.</p>
       <div class="box"><span class="pill">Verified</span><span class="pill">Same building</span><span class="pill">Lobby pickup</span></div>
-      <button class="btn" data-go="verify">Get started</button>
+      <button class="btn" id="wantBuy">I want to buy</button>
+      <button class="btn alt" id="wantSell">I want to sell</button>
       <p class="muted" style="margin-top:14px;font-size:12px">Prototype built by a UM student. Listings are samples and no real payment is taken. Not officially run or endorsed by the University of Miami.</p>
     </section>
 
@@ -186,9 +187,17 @@ details.opt summary{cursor:pointer;color:var(--muted);font-size:14px}
 
     <!-- 9 Sell (out of scope) -->
     <section class="screen" id="s-sell">
-      <h1>Sell an item</h1>
-      <p class="muted">Listing flow is not part of this prototype. In the test, sellers are recruited by hand through student group chats.</p>
-      <button class="btn alt" data-go="feed">Back</button>
+      <h1>Sell your items</h1>
+      <p class="muted">Sellers pay nothing. Every field is optional, so use whatever you already have.</p>
+      <label for="sellPost">Paste your group chat post</label>
+      <textarea id="sellPost" rows="3" placeholder="Copy and paste a post you already wrote"></textarea>
+      <label for="sellLink">Or a link to your list</label>
+      <input id="sellLink" placeholder="Google Sheet, Notion, Drive, any format" autocomplete="off">
+      <label for="sellItem">Or just an item name</label>
+      <input id="sellItem" placeholder="Desk, air fryer, chair..." autocomplete="off">
+      <label for="sellContact">How buyers can reach you</label>
+      <input id="sellContact" placeholder="Email, phone or chat ID" autocomplete="off">
+      <button class="btn" id="sellSubmit">List my items</button>
     </section>
 
     <!-- Session log for tests -->
@@ -211,7 +220,7 @@ details.opt summary{cursor:pointer;color:var(--muted);font-size:14px}
   <h2>How to test this prototype</h2>
   <p><b>Task A.</b> "You just moved in and need a desk. Find one and buy it."</p>
   <p><b>Task B.</b> "You need several items before the semester starts. Ask the service to find them for you."</p>
-  <p>The first screen asks for a school email and has a small Skip link. Buying, offers, messages and Wanted Lists still need verification. A demo email and code are already filled in.</p>
+  <p>The first screen asks whether you want to buy or sell. Browsing needs no sign-in. Buying, offers, messages, Wanted Lists and listing items ask for a school email, with a small Skip link. A demo email and code are already filled in.</p>
   <p>The <b>Log</b> tab records each step with a timestamp so completion time and backtracking can be written up after the session.</p>
   <p>What is simulated: verification email, listings, payment hold and matching. A person does the matching by hand during the pilot.</p>
 </aside>
@@ -309,6 +318,9 @@ $("ofSend").onclick=()=>{const i=S.item,v=parseFloat($("ofAmt").value);
   if(v>=i.p){log("OFFER at or above list: "+v);S.offerPrice=null;show("checkout");return}
   if(v<i.floor){$("ofErr").textContent="The seller cannot accept this offer. You can try a higher amount or buy at the listed price.";log("OFFER declined: "+v+" of "+i.p);return}
   S.offerPrice=v;log("OFFER accepted: "+v+" of "+i.p);show("checkout")};
+$("wantBuy").onclick=()=>{log("intent: buy");S.stack=["welcome","building"];show("building")};
+$("wantSell").onclick=()=>{log("intent: sell");S.stack=["welcome","sell"];show("sell")};
+$("sellSubmit").onclick=()=>needVerify(()=>{const f=["sellPost","sellLink","sellItem","sellContact"].filter(k=>$(k).value.trim()).join(", ")||"nothing filled";log("SELL submitted: "+f);$("doneTitle").textContent="Listing received";$("doneText").textContent="We will show your items to students in your building and nearby first.";show("done")});
 $("skipVerify").onclick=()=>{log("verification skipped");show(S.bld?"feed":"building")};
 $("buyBtn").onclick=()=>needVerify(()=>show("checkout"));
 $("msgBtn").onclick=()=>needVerify(()=>{log("message seller tapped");alert("Messaging is simulated in this prototype. The founder relays messages by hand during the pilot.")});
